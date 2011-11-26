@@ -6,140 +6,18 @@
 </head>
 <body>
 <script type="text/javascript" src="static/jquery.min.js"></script>
-<script type="text/javascript" src="static/underscore.min.js"></script>
-<script type="text/javascript" src="static/rexapp.js"></script>
+<script type="text/javascript" src="static/Crawler.js"></script>
+<script type="text/javascript">
+	//crawler modification for running outside Google Docs
+	
+	Crawler.init = function(){
+
+	}
+	
+</script>
+<script type="text/javascript" src="static/CrawlerList.js"></script>
 <script type="text/javascript"> 
-        
-var BRDCrawler = new Crawler({
-	id: "BRD",
-	bankName: "BRD - Groupe Societe Generale",
-	url: "http://www.brd.ro/piete-financiare/piata-valutara-si-monetara/curs-de-schimb/",
-	row_xpath: '//div[@id="content"]//table[1]//td/table/tr',
-	parser: function(r){ 
-		var self = this;
-		
- 		_.each(r.query.results.tr, function(row){ 
-			var result = {};   
-			try{                     
-			   result.source = row; 
-			   result.id = self.id;  
-			   result.currency = (row.td[1].p.length == 3)? row.td[1].p : null;
-			   result.buy = (parseFloat(row.td[5].p) != isNaN())? row.td[5].p : null;
-			   result.sell = (parseFloat(row.td[6].p) != isNaN())? row.td[6].p : null;
-			   
-			   self.results.push(result);
-			   self.trigger("crawlSuccess", { "target": self, "data": result })
-			}   
-			catch(e){
-				 self.log(row)  
-			}
-		});
-		
-		self.trigger("crawlComplete", { "target": self, "data": self.results })
-	 }
-});
 
-
-BRDCrawler.bind("crawlSuccess", function(e){
-	// console.warn(e.target.id, e.data, e.data.currency, e.data.sell)
-});
-
-BRDCrawler.bind("crawlComplete", function(e){
-	console.log("Completed crawling", e.target.id, e.data.length + " currencies", e.data)
-	// console.log(BCRCrawler.results)
-});        
-
-var BCRCrawler = new Crawler({
-	id: "BCR",
-	bankName: "Banca Comerciala Romana",
-	url: "https://www.bcr.ro/ro/curs-valutar",
-	row_xpath: '//div[@id="main0BCRExchange_result"]/table/tr',
-	parser: function(r){ 
-		
-		var self = this;
-		
- 		_.each(r.query.results.tr, function(row){ 
-	
-			var result = {};   
-			try{
-			   var currencyCode = self.getCurrencyCode(row.td[1].p);
-			
-			
-			   if (!currencyCode){
-					return false;
-			   }
-				                     
-			   result.source = row; 
-			   result.id = self.id;  
-			   result.currency = (currencyCode)? currencyCode.toUpperCase() : null;
-			   result.buy = (parseFloat(row.td[2].p) != isNaN())? row.td[2].p : null;
-			   result.sell = (parseFloat(row.td[3].p) != isNaN())? row.td[3].p : null;
-			   
-			   self.results.push(result);
-			   self.trigger("crawlSuccess", { "target": self, "data": result })
-			}   
-			catch(e){
-				 self.log(row)  
-			}
-		});
-		
-		self.trigger("crawlComplete", { "target": self, "data": self.results })
-	 }
-}); 
-
-var LeCrawler = new Crawler({
-	id: "PiraeusBank",
-	url: "http://www.piraeusbank.ro/Banca/Unelte/Istoric-Curs-Valutar.html",
-	row_xpath: '//table[@id="ctl00_contentPlaceHolder_ctl02_gvIstoricCursValutar"]/tr',
-	parser: function(r){ 
-		
-		var self = this;
-		
- 		_.each(r.query.results.tr, function(row){
-	
-	
-			var result = {};   
-			try{
-			   var currencyCode = self.getCurrencyCode(row.td[1].span.content);
-			
-			   if (!currencyCode){
-					return false;
-			   }
-			
-			
-			   result.source = row; 
-			   result.id = self.id;  
-			   result.currency = (currencyCode)? currencyCode.toUpperCase() : null;
-			   result.buy = self.getCurrencyValue(row.td[2].span.content);				
-			   result.sell = self.getCurrencyValue(row.td[3].span.content);
-			   
-			   self.results.push(result);
-			   self.trigger("crawlSuccess", { "target": self, "data": result })
-			}   
-			catch(e){
-				 self.log(row)  
-			}
-		});
-		
-		self.trigger("crawlComplete", { "target": self, "data": self.results })
-	 }
-});    
-
-// BCRCrawler.bind("crawlSuccess", function(e){
-// 	// console.warn(e.target.id, e.data, e.data.currency, e.data.sell)
-// });        
-
-// BCRCrawler.bind("crawlComplete", function(e){
-// 	console.log("Completed crawling", e.target.id, e.data.length + " currencies", e.data)
-// });
-
-LeCrawler.bind("crawlComplete", function(e){
-	console.log("Completed crawling", e.target.id, e.data.length + " currencies", e.data)
-});
-
-
-// BRDCrawler.init()  
-// BCRCrawler.init()
 LeCrawler.init()
 
 // console.log(getCurrencyCode("1 FRANC ELVETIAN"))  
