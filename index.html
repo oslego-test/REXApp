@@ -9,32 +9,107 @@
 <script type="text/javascript" src="static/Crawler.js"></script>
 <script type="text/javascript">
 	//crawler modification for running outside Google Docs
+	//This script needs to be loaded before CrawlerList.js where the Crawler class is used
 	
-	Crawler.init = function(){
+	Crawler.prototype.init = function(){
+		  var self = this; 
+			
+		  var crawlerServiceURL = this.getCrawlServiceURL();
 
-	}
-	
+			$.ajax({
+				url: crawlerServiceURL
+			})
+			.success(function(r){
+				self.parser.call(self, r);
+			 })
+			.error(
+			 	function(r){ 
+					console.error("ERROR", self.id, r)
+				}
+		   	)
+		}
 </script>
+
 <script type="text/javascript" src="static/CrawlerList.js"></script>
+
 <script type="text/javascript"> 
 
-LeCrawler.init()
+	var LECrawler = new Crawler({
+	  url: "http://www.bancatransilvania.ro/bt/curs_valutar_spot.html",
+	  rowXPath: '/html/body/table/tr[3]/td[@class=\'main_table\']/table/tr[3]/td/table/tr/td/table/tr[5]/td[2]/table/tr[4]/td/table/tr',
+	  id: "BT",
+	  parser: function(data){
+  
+	    var rows = data.query.results.tr;
+	    var results = [];
+    
+	    for (var i=0, len = rows.length; i<len; i++ ){
+      
+	      try{
+	        // the currency code node
+	        var currNode = rows[i].td[2].p;
+    
+	        // the buy value node
+	        var buyNode = rows[i].td[5];
+        
+	        // the sell value node
+	        var sellNode = rows[i].td[6];    
+        
+	        if (currNode){
+  
+	          // storage for the node output
+	          var resultNode = {};
+          
+	          resultNode.bank = this.id;
+	          resultNode.currency = this.getCurrencyCode(currNode);
+  
+	          // return if there's no valid currency code
+	          if (resultNode.currency.length != 3){
+	              return false;
+	          }
+          
+	          resultNode.buy = this.getCurrencyValue(buyNode.p);
+	          resultNode.sell = this.getCurrencyValue(sellNode.p);
+          
+          
+	          results.push(resultNode);
+	        }
+	      }
+	      catch(e){
+	          this.trigger("error", { "message": "Parsing error","error": e });
+	      }
+	    }
 
-// console.log(getCurrencyCode("1 FRANC ELVETIAN"))  
-// console.log(getCurrencyCode("1 DOLAR CANADA"))  
-// console.log(getCurrencyCode("1 Lira sterlina"))  
-// console.log(getCurrencyCode("1 DOLAR AUSTRALIAN"))  
-// console.log(getCurrencyCode("1 COROANA NORVEGIA"))  
-// console.log(getCurrencyCode("1 COROANA DANEZA"))  
-// console.log(getCurrencyCode("1 COROANA SUEDEZA"))  
-// console.log(getCurrencyCode("1 YEN JAPONEZ"))  
-// console.log(getCurrencyCode("1 FORINT UNGARIA"))  
-// console.log(getCurrencyCode("1 ZLOT POLONIA"))  
-// console.log(getCurrencyCode("1 COROANA CEHIA"))  
-// console.log(getCurrencyCode("1 RUBLA RUSEASCA"))  
-// console.log(getCurrencyCode("1 LEVA BULGARIA")) 
+	    if (results.length){
+	      this.trigger("complete", { "results": results });
+	    }
+    
+	  }
+	})
+
+
+	LECrawler.bind("complete", function(e){
+		console.log("LECrawler Results" , e.results)
+	});
+
+	LECrawler.init();
+
+
+
+
+
+
+// Run all crawlers
 // 
-// console.log(getCurencyMultiplier("100 Yeni japonezi"))
+// (function(){
+//   for (var i in Crawlers){
+// 	
+//     Crawlers[i].bind("complete", function(e){
+// 		console.log(e.results)
+//     });
+// 
+//     Crawlers[i].init();
+// })()
 
 </script>
 </body>
