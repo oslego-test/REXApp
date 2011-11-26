@@ -35,9 +35,9 @@
 <script type="text/javascript"> 
 
 	var LECrawler = new Crawler({
-	  url: "http://www.bancatransilvania.ro/bt/curs_valutar_spot.html",
-	  rowXPath: '/html/body/table/tr[3]/td[@class=\'main_table\']/table/tr[3]/td/table/tr/td/table/tr[5]/td[2]/table/tr[4]/td/table/tr',
-	  id: "BT",
+	  url: "http://www.raiffeisen.ro/curs-valutar",
+	  rowXPath: '//div[@class="rzbContentTextNormal"]/table/tr',
+	  id: "Raiffeisen Bank",
 	  parser: function(data){
   
 	    var rows = data.query.results.tr;
@@ -47,7 +47,7 @@
       
 	      try{
 	        // the currency code node
-	        var currNode = rows[i].td[2].p;
+	        var currNode = rows[i].td[1].p;
     
 	        // the buy value node
 	        var buyNode = rows[i].td[5];
@@ -94,13 +94,6 @@
 
 	LECrawler.init();
 
-
-
-
-
-
-// Run all crawlers
-// 
 // (function(){
 //   for (var i in Crawlers){
 // 	
@@ -109,6 +102,7 @@
 //     });
 // 
 //     Crawlers[i].init();
+//   }
 // })()
 
 </script>

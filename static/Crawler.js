@@ -197,7 +197,7 @@ Crawler.prototype.getCurrencyCode = function(string){
 		
 		// forint unguresc
 		huf: function(str){
-			var pattern =  /\b\d*?huf\d*?\b|\bforinti{0,2}\b(\s*\b(ung(aria|uresc|uresti))\b)/gi;
+			var pattern =  /\b\d*huf\d*?\b|\bforinti{0,2}\b(\s*\b(ung(aria|uresc|uresti))\b)/gi;
 			return pattern.test(string) 
 		},
 		
@@ -226,10 +226,22 @@ Crawler.prototype.getCurrencyCode = function(string){
 		}		
 	}
 	
-	for (i in _currencyTests){
-		if (_currencyTests[i].call(string))
-			return i.toUpperCase()
+	// run a quick ckech on keys for simple currency codes
+	if (string.length == 3){
+    	for (i in _currencyTests){
+    	    if (i === string.toLowerCase()){
+    	        return i.toUpperCase()
+    	    }
+    	}	    
 	}
+	
+	// check against the regex values
+	for (i in _currencyTests){
+		if (_currencyTests[i].call(string)){
+		    return i.toUpperCase()
+		}
+	}
+
 };
 
 Crawler.prototype.getCurencyMultiplier = function(string){

@@ -290,4 +290,110 @@ Crawlers["BT"] = new Crawler({
     }
     
   }
-})
+});
+
+Crawlers["Volksbank"] = new Crawler({
+  url: "http://www.volksbank.ro/ro/AfisareCursValutar",
+	rowXPath: '//table[@id="tr-no-line"]/tr[3]/td[2]/table/tr[8]/td/div/table/tr',
+	id: "Volksbank",
+	parser: function(data){
+
+		var rows = data.query.results.tr;
+		var results = [];
+
+		for (var i=0, len = rows.length; i<len; i++ ){
+
+			try{
+				// the currency code node
+				var currNode = rows[i].td[0];
+
+				// the buy value node
+				var buyNode = rows[i].td[2];
+
+				// the sell value node
+				var sellNode = rows[i].td[3];
+
+				if (currNode){
+
+					// storage for the node output
+					var resultNode = {};
+
+					resultNode.bank = this.id;
+					resultNode.currency = this.getCurrencyCode(currNode.span);
+
+					// return if there's no valid currency code
+					if (resultNode.currency.length != 3){
+							return false;
+					}
+
+					resultNode.buy = this.getCurrencyValue(buyNode.span);
+					resultNode.sell = this.getCurrencyValue(sellNode.span);
+
+
+					results.push(resultNode);
+				}
+			}
+			catch(e){
+					this.trigger("error", { "message": "Parsing error","error": e });
+			}
+		}
+
+		if (results.length){
+			this.trigger("complete", { "results": results });
+		}
+
+  }
+});
+
+Crawlers["Raiffeisen"] = new Crawler({
+  url: "http://www.raiffeisen.ro/curs-valutar",
+  rowXPath: '//div[@class="rzbContentTextNormal"]/table/tr',
+  id: "Raiffeisen Bank",
+  parser: function(data){
+
+    var rows = data.query.results.tr;
+    var results = [];
+
+    for (var i=0, len = rows.length; i<len; i++ ){
+  
+      try{
+        // the currency code node
+        var currNode = rows[i].td[1].p;
+
+        // the buy value node
+        var buyNode = rows[i].td[5];
+    
+        // the sell value node
+        var sellNode = rows[i].td[6];    
+    
+        if (currNode){
+
+          // storage for the node output
+          var resultNode = {};
+      
+          resultNode.bank = this.id;
+          resultNode.currency = this.getCurrencyCode(currNode);
+
+          // return if there's no valid currency code
+          if (resultNode.currency.length != 3){
+              return false;
+          }
+      
+          resultNode.buy = this.getCurrencyValue(buyNode.p);
+          resultNode.sell = this.getCurrencyValue(sellNode.p);
+      
+      
+          results.push(resultNode);
+        }
+      }
+      catch(e){
+          this.trigger("error", { "message": "Parsing error","error": e });
+      }
+    }
+
+    if (results.length){
+      this.trigger("complete", { "results": results });
+    }
+
+  }
+});
