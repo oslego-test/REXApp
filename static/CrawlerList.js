@@ -397,3 +397,160 @@ Crawlers["Raiffeisen"] = new Crawler({
 
   }
 });
+
+Crawlers["Unicredit Tiriac"] = new Crawler({
+  url: "http://www.unicredit-tiriac.ro/exchp",
+	rowXPath: '//div[@id="content"]/div[2]/div[2]/table/tr[position()>15]',
+	id: "Unicredit Tiriac",
+	parser: function(data){
+
+		var rows = data.query.results.tr;
+		var results = [];
+
+		for (var i=0, len = rows.length; i<len; i++ ){
+
+			try{
+				// the currency code node
+				var currNode = rows[i].td[0];
+
+				// the buy value node
+				var buyNode = rows[i].td[1];
+
+				// the sell value node
+				var sellNode = rows[i].td[2];
+
+				if (currNode){
+
+					// storage for the node output
+					var resultNode = {};
+
+					resultNode.bank = this.id;
+					resultNode.currency = this.getCurrencyCode(currNode.strong);
+
+					// return if there's no valid currency code
+					if (resultNode.currency.length != 3){
+							return false;
+					}
+
+					resultNode.buy = this.getCurrencyValue(buyNode.p);
+					resultNode.sell = this.getCurrencyValue(sellNode.p);
+
+
+					results.push(resultNode);
+				}
+			}
+			catch(e){
+					this.trigger("error", { "message": "Parsing error","error": e });
+			}
+		}
+
+		if (results.length){
+			this.trigger("complete", { "results": results });
+		}
+
+  }
+});
+
+Crawlers["Credit Europe Bank"] = new Crawler({
+  url: "http://www.crediteurope.ro/",
+  rowXPath: '//div[@id="exchange_rates"]/table/tr',
+  id: "Credit Europe Bank",
+  parser: function(data){
+
+    var rows = data.query.results.tr;
+    var results = [];
+
+    for (var i=0, len = rows.length; i<len; i++ ){
+      try{
+        // the currency code node
+        var currNode = rows[i].td[1].a.content;
+
+        // the buy value node
+        var buyNode = rows[i].td[3];
+    
+        // the sell value node
+        var sellNode = rows[i].td[4];    
+    
+        if (currNode){
+
+          // storage for the node output
+          var resultNode = {};
+      
+          resultNode.bank = this.id;
+          resultNode.currency = this.getCurrencyCode(currNode);
+
+          // return if there's no valid currency code
+          if (resultNode.currency.length != 3){
+              return false;
+          }
+      
+          resultNode.buy = this.getCurrencyValue(buyNode.p);
+          resultNode.sell = this.getCurrencyValue(sellNode.p);
+      
+      
+          results.push(resultNode);
+        }
+      }
+      catch(e){
+          this.trigger("error", { "message": "Parsing error","error": e });
+      }
+    }
+
+    if (results.length){
+      this.trigger("complete", { "results": results });
+    }
+
+  }
+});
+
+Crawlers["ProCredit Bank"] = new Crawler({
+  url: "http://www.procreditbank.ro/ro/curs-valutar",
+  rowXPath: '//table[@class="licitatii"]/tbody/tr',
+  id: "ProCredit Bank",
+  parser: function(data){
+
+    var rows = data.query.results.tr;
+    var results = [];
+
+    for (var i=0, len = rows.length; i<len; i++ ){
+      try{
+        // the currency code node
+        var currNode = rows[i].td[0].p;
+
+        // the buy value node
+        var buyNode = rows[i].td[7];
+    
+        // the sell value node
+        var sellNode = rows[i].td[8];    
+    
+        if (currNode){
+
+          // storage for the node output
+          var resultNode = {};
+      
+          resultNode.bank = this.id;
+          resultNode.currency = this.getCurrencyCode(currNode);
+
+          // return if there's no valid currency code
+          if (resultNode.currency.length != 3){
+              return false;
+          }
+      
+          resultNode.buy = this.getCurrencyValue(buyNode.p);
+          resultNode.sell = this.getCurrencyValue(sellNode.p);
+      
+      
+          results.push(resultNode);
+        }
+      }
+      catch(e){
+          this.trigger("error", { "message": "Parsing error","error": e });
+      }
+    }
+
+    if (results.length){
+      this.trigger("complete", { "results": results });
+    }
+
+  }
+});

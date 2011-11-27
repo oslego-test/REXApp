@@ -35,25 +35,24 @@
 <script type="text/javascript"> 
 
 	var LECrawler = new Crawler({
-	  url: "http://www.raiffeisen.ro/curs-valutar",
-	  rowXPath: '//div[@class="rzbContentTextNormal"]/table/tr',
-	  id: "Raiffeisen Bank",
+	  url: "http://www.procreditbank.ro/ro/curs-valutar",
+	  rowXPath: '//table[@class="licitatii"]/tbody/tr',
+	  id: "ProCredit Bank",
 	  parser: function(data){
   
 	    var rows = data.query.results.tr;
 	    var results = [];
     
 	    for (var i=0, len = rows.length; i<len; i++ ){
-      
 	      try{
 	        // the currency code node
-	        var currNode = rows[i].td[1].p;
+	        var currNode = rows[i].td[0].p;
     
 	        // the buy value node
-	        var buyNode = rows[i].td[5];
+	        var buyNode = rows[i].td[7];
         
 	        // the sell value node
-	        var sellNode = rows[i].td[6];    
+	        var sellNode = rows[i].td[8];    
         
 	        if (currNode){
   
@@ -86,13 +85,12 @@
     
 	  }
 	})
-
-
+	
 	LECrawler.bind("complete", function(e){
 		console.log("LECrawler Results" , e.results)
 	});
 
-	LECrawler.init();
+	// LECrawler.init();
 
 // (function(){
 //   for (var i in Crawlers){

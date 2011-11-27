@@ -122,113 +122,120 @@ Takes a natural language string and tries to match a valid currency code.
 	string with the currency code. Example: USD	
 	null if no currency code could be found.
 	
-Example: getCurrencyCode("American Dollar") -> USD
-Example: getCurrencyCode("100 Hungarian Forints") -> HUF
+Example: getCurrencyCode("USD") -> USD
+Example: getCurrencyCode("usd") -> USD
+Example: getCurrencyCode("Dolar american") -> USD
+Example: getCurrencyCode("100 Forinti Ungaria") -> HUF
 Example: getCurrencyCode("Skittles") -> null
 */
 
 Crawler.prototype.getCurrencyCode = function(string){
+    
+    // remove non-word characters and digits optionally borderd by whitespace
+    var string = string.replace(/\s*[\*]+\s*/, "").replace(/\s*\d+\s*/,"");
+
+    // TODO: remove functions, keep key/value store and test patter in the iteration
 	var _currencyTests = {
 		// euro
 		eur: function(str){ 
 			var pattern =  /\beuro?\b>*/gi;
-			return pattern.test(string) 
+			return pattern.test(str) 
 		},
 		
 		// dolar american
 		usd: function(str){
-			var pattern =  /\busd\b|\bdolar(ul|i{0,1})?\b(\s*\b(america(n|ni)?|usd|s\.?u\.?a\.?)\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bdolar(ul|i{0,2})?\b\s*\bamerica(n|ni)?|s\.?u\.?a\.?\b/gi;
+			return pattern.test(str) 
 		},
 		
 		// dolar australian
 		aud: function(str){
-			var pattern =  /\baud\b|\bdolar(ul|i{0,1})?\b(\s*\b(australi(an|ani|eni)?|aud)\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bdolar(ul|i{0,1})?\b(\s*\baustrali(a|an|ani|eni)\b)/gi;
+			return pattern.test(str) 
 		},
 		
 		// dolar canada
 		cad: function(str){
-			var pattern =  /\bdolar(ul|i{0,1})?\b(\s*\b(canad(a|ian|ieni))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bdolar(ul|i{0,1})?\b\s*\bcanad(a|ian|ieni)\b/gi;
+			return pattern.test(str) 
 		},
 	
 		// franc elvetian
 		chf: function(str){
-			var pattern =  /\bchf\b|\bfranc(ul|i{0,1})?\b(\s*\b(elveti(an|eni))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bfranc(ul|i{0,1})?\b\s*\belveti(an|eni)\b/gi;
+			return pattern.test(str) 
 		},
 	
 		// coroana suedeza
 		sek: function(str){
-			var pattern =  /\bcoroan(a|e)\b(\s*\b(sued(ia|eza|eze))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bcoroan(a|e)\b\s*\bsued(ia|eza|eze)\b/gi;
+			return pattern.test(str) 
 		},
 		
 		// coroana daneza
 		dkk: function(str){
-			var pattern =  /\bcoroan(a|e)\b(\s*\b(dane(marca|za|ze))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bcoroan(a|e)\b\s*\bdane(marca|za|ze)\b/gi;
+			return pattern.test(str) 
 		},
 
 		// coroana islandeza
 		ikk: function(str){
-			var pattern =  /\bcoroan(a|e)\b(\s*\b(island(a|eze))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bcoroan(a|e)\b\s*\bisland(a|eza|eze)\b/gi;
+			return pattern.test(str) 
 		},
 
 		// coroana norvegiena
 		nok: function(str){
-			var pattern =  /\bcoroan(a|e)\b(\s*\b(norvegi(a|ene))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bcoroan(a|e)\b\s*\bnorvegi(a|ana|ene)\b/gi;
+			return pattern.test(str) 
 		},
 		
 		// lirea sterlina
 		gbp: function(str){
-			var pattern =  /\bgbp\b|\blir(a|e)\b(\s*\b(sterlin(a|ene))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\blir(a|e)\b\s*\bsterlin(a|e)\b/gi;
+			return pattern.test(str) 
 		},
 	
 		// yen japonez
 		jpy: function(str){
-			var pattern =  /\byeni{0,2}\b(\s*\b(japon(ia|ez|ezi))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\byen(i{0,1}|ul)\b\s*\bjapon(ia|ez|ezi)\b/gi;
+			return pattern.test(str) 
 		},
 		
 		// forint unguresc
 		huf: function(str){
-			var pattern =  /\b\d*huf\d*?\b|\bforinti{0,2}\b(\s*\b(ung(aria|uresc|uresti))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bforint(i{0,1}|ul)\b\s*\bung(aria|uresc|uresti)\b/gi;
+			return pattern.test(str) 
 		},
 		
 		// zlot polonez
 		pln: function(str){
-			var pattern =  /\bzloti{0,2}\b(\s*\b(polon(ia|ez|ezi))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bzlot(i{0,1}|ul)\b\s*\bpolon(ia|ez|ezi)\b/gi;
+			return pattern.test(str) 
 		},
 		
 		// corona ceha
 		czk: function(str){
-			var pattern =  /\bcoroan(a|e)\b(\s*\b(ceh(a|ia|e|esti))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bcoroan(a|e)\b\s*\bceh(a|ia|e|esti)\b/gi;
+			return pattern.test(str) 
 		},
 		
 		// rubla ruseasca
 		rub: function(str){
-			var pattern =  /\brubl(a|e)\b(\s*\b(rus(a|ia|easca|esti))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\brubl(a|e)\b\s*\brus(a|ia|easca|esti)\b/gi;
+			return pattern.test(str) 
 		},
 		
 		// leva bulgara
 		bgn: function(str){
-			var pattern =  /\bleva\b(\s*\b(bulgar(a|ia|e|esti))\b)/gi;
-			return pattern.test(string) 
+			var pattern =  /\bleva\b\s*\bbulgar(a|ia|easca|e|esti)\b/gi;
+			return pattern.test(str) 
 		}		
 	}
 	
 	// run a quick ckech on keys for simple currency codes
 	if (string.length == 3){
-    	for (i in _currencyTests){
+    	for (var i in _currencyTests){
     	    if (i === string.toLowerCase()){
     	        return i.toUpperCase()
     	    }
@@ -236,8 +243,8 @@ Crawler.prototype.getCurrencyCode = function(string){
 	}
 	
 	// check against the regex values
-	for (i in _currencyTests){
-		if (_currencyTests[i].call(string)){
+	for (var i in _currencyTests){
+		if (_currencyTests[i].call(this, string)){
 		    return i.toUpperCase()
 		}
 	}
