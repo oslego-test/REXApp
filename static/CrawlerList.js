@@ -6,6 +6,12 @@ Crawlers["BRD"] = new Crawler({
   id: "BRD",
   parser: function(data){
   
+	// early return on invalid response
+	if (!data.query.results){
+		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+		return
+	}
+	
     var rows = data.query.results.tr;
     var results = [];
     
@@ -43,7 +49,12 @@ Crawlers["BCR"] = new Crawler({
   rowXPath: '//div[@id="main0BCRExchange_result"]/table/tr',
   id: "BCR",
   parser: function(data){
-  
+      
+  	// early return on invalid response
+  	if (!data.query.results){
+  		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+  		return
+  	}  
     var rows = data.query.results.tr;
     var results = [];
     
@@ -92,7 +103,11 @@ Crawlers["AlphaBank"] = new Crawler({
   rowXPath: '//table[@class="tabela_principala"]/tr[6]/td[4]/table[2]/tr',
   id: "AlphaBank",
   parser: function(data){
-  
+  	// early return on invalid response
+  	if (!data.query.results){
+  		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+  		return
+  	}  
     var rows = data.query.results.tr;
     var results = [];
     
@@ -141,7 +156,11 @@ Crawlers["PiraeusBank"] = new Crawler({
   rowXPath: '//table[@id="ctl00_contentPlaceHolder_ctl02_gvIstoricCursValutar"]/tr',
   id: "PiraeusBank",
   parser: function(data){
-  
+  	// early return on invalid response
+  	if (!data.query.results){
+  		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+  		return
+  	}  
     var rows = data.query.results.tr;
     var results = [];
     
@@ -191,7 +210,11 @@ Crawlers["CEC"] = new Crawler({
   rowXPath: '//div[@id="content-b"]/div[2]/table/tr',
   id: "CEC",
   parser: function(data){
-  
+  	// early return on invalid response
+  	if (!data.query.results){
+  		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+  		return
+  	}  
     var rows = data.query.results.tr;
     var results = [];
     
@@ -244,7 +267,11 @@ Crawlers["BT"] = new Crawler({
   rowXPath: '/html/body/table/tr[3]/td[@class=\'main_table\']/table/tr[3]/td/table/tr/td/table/tr[5]/td[2]/table/tr[4]/td/table/tr',
   id: "BT",
   parser: function(data){
-  
+  	// early return on invalid response
+  	if (!data.query.results){
+  		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+  		return
+  	}  
     var rows = data.query.results.tr;
     var results = [];
     
@@ -297,7 +324,11 @@ Crawlers["Volksbank"] = new Crawler({
 	rowXPath: '//table[@id="tr-no-line"]/tr[3]/td[2]/table/tr[8]/td/div/table/tr',
 	id: "Volksbank",
 	parser: function(data){
-
+    	// early return on invalid response
+    	if (!data.query.results){
+    		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+    		return
+    	}
 		var rows = data.query.results.tr;
 		var results = [];
 
@@ -350,7 +381,11 @@ Crawlers["Raiffeisen"] = new Crawler({
   rowXPath: '//div[@class="rzbContentTextNormal"]/table/tr',
   id: "Raiffeisen Bank",
   parser: function(data){
-
+  	// early return on invalid response
+  	if (!data.query.results){
+  		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+  		return
+  	}
     var rows = data.query.results.tr;
     var results = [];
 
@@ -403,7 +438,11 @@ Crawlers["Unicredit Tiriac"] = new Crawler({
 	rowXPath: '//div[@id="content"]/div[2]/div[2]/table/tr[position()>15]',
 	id: "Unicredit Tiriac",
 	parser: function(data){
-
+    	// early return on invalid response
+    	if (!data.query.results){
+    		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+    		return
+    	}
 		var rows = data.query.results.tr;
 		var results = [];
 
@@ -456,7 +495,11 @@ Crawlers["Credit Europe Bank"] = new Crawler({
   rowXPath: '//div[@id="exchange_rates"]/table/tr',
   id: "Credit Europe Bank",
   parser: function(data){
-
+  	// early return on invalid response
+  	if (!data.query.results){
+  		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+  		return
+  	}
     var rows = data.query.results.tr;
     var results = [];
 
@@ -508,7 +551,11 @@ Crawlers["ProCredit Bank"] = new Crawler({
   rowXPath: '//table[@class="licitatii"]/tbody/tr',
   id: "ProCredit Bank",
   parser: function(data){
-
+  	// early return on invalid response
+  	if (!data.query.results){
+  		this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+  		return
+  	}
     var rows = data.query.results.tr;
     var results = [];
 

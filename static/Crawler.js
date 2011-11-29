@@ -255,3 +255,36 @@ Crawler.prototype.getCurencyMultiplier = function(string){
 	var digits = string.match(/\d+/);
 	return digits ? parseInt(digits[0], 10) : 1;
 };
+
+
+RetryQueue = (function(){
+	var _items = {},
+		_retryCount = 5,
+		_delay = 1000;
+		
+	function retry(fn, context){
+        // there is no 'window' context in Google Apps Script
+	    if (window){
+	        window.setTimeout(function(){
+    			fn.call(context)
+    		}, _delay);
+	    }
+		else{
+		    fn.call(context);
+		}
+	}
+	
+	return {
+		addRetry: function(id, fn, context){
+			if (!_items[id]){
+				_items[id] = { count: _retryCount };
+			}
+
+			_items[id].count--;
+			
+			if (_items[id].count){
+				retry(fn, context);
+			}
+		}
+	}
+})();

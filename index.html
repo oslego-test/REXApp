@@ -35,11 +35,17 @@
 <script type="text/javascript"> 
 
 	var LECrawler = new Crawler({
-	  url: "http://www.procreditbank.ro/ro/curs-valutar",
+	  url: "http://www.google.com",
 	  rowXPath: '//table[@class="licitatii"]/tbody/tr',
-	  id: "ProCredit Bank",
+	  id: "Test crawler",
 	  parser: function(data){
   
+		// early return on invalid response
+		if (!data.query.results){
+			this.trigger("crawlerror", {type: "crawlerror", target: this, message: "invalid crawl response", "data": data});
+			return
+		}
+		
 	    var rows = data.query.results.tr;
 	    var results = [];
     
@@ -89,19 +95,28 @@
 	LECrawler.bind("complete", function(e){
 		console.log("LECrawler Results" , e.results)
 	});
+	
+	LECrawler.bind("crawlerror", function(e){
+		RetryQueue.addRetry(e.target.id, e.target.init, e.target);
+	});
 
-	// LECrawler.init();
+	LECrawler.init();
 
-// (function(){
-//   for (var i in Crawlers){
-// 	
-//     Crawlers[i].bind("complete", function(e){
-// 		console.log(e.results)
-//     });
-// 
-//     Crawlers[i].init();
-//   }
-// })()
+(function(){
+  for (var i in Crawlers){
+	
+    Crawlers[i].bind("complete", function(e){
+		console.log(e.results)
+    });
+
+	Crawlers[i].bind("crawlerror", function(e){
+		console.log("Retry", e.target.id)
+		RetryQueue.addRetry(e.target.id, e.target.init, e.target);
+	});
+
+    Crawlers[i].init();
+  }
+})()
 
 </script>
 </body>
